@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="64" tileheight="64" infinite="0" nextlayerid="6" nextobjectid="1">
+ <tileset firstgid="1" name="RTS_medieval@2" tilewidth="64" tileheight="64" tilecount="1210" columns="55">
+  <image source="RTS_medieval@2.png" width="3520" height="1408"/>
+ </tileset>
+ <layer id="5" name="Tile Layer 1" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFwxkUkImHqr3kgFF7GRgMmRgYjJgwaVrbmwG0I5MJk6a1vYZMqJjafsVlbwYTKqa2X3HZq8zCwKDCgpumlb1RQLOjWXDTtLKXHoDcMg7ZvZ8ZMTEl9sLik5C9zYyomBh7sQGYfbD4JJSuiLGXGLeQmq6o5V9SAQBUJjsZ
+  </data>
+ </layer>
+</map>
