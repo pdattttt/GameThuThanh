@@ -7,7 +7,7 @@ import com.esotericsoftware.kryonet.Server;
 import java.io.IOException;
 
 public class RtsServer {
-    private Server server;
+    private final Server server;
 
     public RtsServer() throws IOException {
         server = new Server();

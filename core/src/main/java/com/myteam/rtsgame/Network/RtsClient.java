@@ -11,8 +11,8 @@ import com.myteam.rtsgame.Network.Network;
 import java.io.IOException;
 
 public class RtsClient {
-    private Client client;
-    private Main mainGame; // Tham chiếu để chuyển màn hình
+    private final Client client;
+    private final Main mainGame; // Tham chiếu để chuyển màn hình
 
     public RtsClient(Main game) {
         this.mainGame = game;

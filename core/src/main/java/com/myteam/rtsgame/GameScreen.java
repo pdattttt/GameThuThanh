@@ -12,22 +12,35 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.PolylineMapObject;
+import com.badlogic.gdx.math.Polyline;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 public class GameScreen extends ScreenAdapter {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
     private SpriteBatch batch; // Dùng để vẽ nông dân
-    private float unitWidth = 128;
-    private float unitHeight = 128;
+    private final float unitWidth = 128;
+    private final float unitHeight = 128;
+    private Enemy testEnemy;
+    private Texture enemyTexture;
+    private Array<Vector2> enemyPath;
+    // Bản đồ logic (Ví dụ 6 dòng x 10 cột)
+    // Bạn có thể sửa các số 1 để tạo đường đi ngoằn ngoèo tùy ý!
+
     // Các biến camera
 
-    private float cameraSpeed = 400f; // Tăng tốc độ lên chút cho mượt
+    private final float cameraSpeed = 400f; // Tăng tốc độ lên chút cho mượt
     private float mapWidth, mapHeight;
 
     // Các biến nông dân (Test)
     private Texture peasantImg;
-    private float peasantX = 300, peasantY = 300;
+    private final float peasantX = 300;
+    private final float peasantY = 300;
 
     @Override
     public void show() {
@@ -41,8 +54,10 @@ public class GameScreen extends ScreenAdapter {
         try {
             map = new TmxMapLoader().load("maps/level1.tmx");
         } catch (Exception e) {
-            System.out.println("Lỗi không tìm thấy map! Hãy kiểm tra lại folder assets/maps/");
+            System.out.println("LỖI LOAD MAP CHI TIẾT LÀ:");
+            e.printStackTrace();
             Gdx.app.exit();
+            return; // Lệnh này cực kỳ quan trọng: Bắt game dừng ngay tại đây, không chạy xuống dưới nữa!
         }
 
         // 3. Lấy kích thước map để giới hạn camera
@@ -65,6 +80,31 @@ public class GameScreen extends ScreenAdapter {
 
         } catch (Exception e) {
             System.out.println("Chưa có ảnh peasant.png, nông dân sẽ không hiện!");
+        }
+        enemyPath = new Array<>();
+        try {
+            // Lấy layer Logic và đường Path1
+            MapLayer logicLayer = map.getLayers().get("logic");
+            MapObject pathObject = logicLayer.getObjects().get("Path1");
+
+            // Lấy ra danh sách các điểm tọa độ
+            Polyline polyline = ((PolylineMapObject) pathObject).getPolyline();
+            float[] vertices = polyline.getTransformedVertices();
+
+            // Cứ 2 số (x, y) ghép lại thành 1 tọa độ Vector2
+            for (int i = 0; i < vertices.length; i += 2) {
+                enemyPath.add(new Vector2(vertices[i], vertices[i + 1]));
+            }
+            System.out.println("Đọc đường đi thành công! Có " + enemyPath.size + " khúc cua.");
+        } catch (Exception e) {
+            System.out.println("Lỗi: Không tìm thấy layer Logic hoặc đường Path1!");
+        }
+
+        // 3. Khởi tạo con quái test
+        batch = new SpriteBatch();
+        enemyTexture = new Texture("maps/peasant.png");
+        if (enemyPath.size > 0) {
+            testEnemy = new Enemy(enemyPath, enemyTexture);
         }
     }
 
@@ -103,6 +143,16 @@ public class GameScreen extends ScreenAdapter {
             batch.draw(peasantImg, peasantX, peasantY, unitWidth, unitHeight);
             batch.end();
         }
+        if (testEnemy != null) {
+            testEnemy.update(delta);
+        }
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        if (testEnemy != null) {
+            testEnemy.render(batch);
+        }
+        batch.end();
     }
 
     private void handleInput(float dt) {
